@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/book_title_label"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+    <EditText
+        android:id="@+id/book_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/book_title_hint"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/book_details_label"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/book_date_read_start"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            tools:text="Wed May 11 11:56 EST 2022" />
+
+        <Button
+            android:id="@+id/book_date_read_end"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            tools:text="Wed May 15 17:24 EST 2022" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/book_finished"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/book_finished_label" />
+</LinearLayout>
