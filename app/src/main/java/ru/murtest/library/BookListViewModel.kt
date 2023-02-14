@@ -13,7 +13,8 @@ class BookListViewModel : ViewModel() {
                 title = "Book #$i",
                 dateReadStart = Date(),
                 dateReadEnd = Date(),
-                isFinished = i % 2 == 0
+                isFinished = i % 2 == 0,
+                isFavorite = i % 3 == 0,
             )
 
             books += book

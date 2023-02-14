@@ -27,7 +27,8 @@ class BookDetailFragment : Fragment() {
             title = "",
             dateReadStart = Date(),
             dateReadEnd = Date(),
-            isFinished = false
+            isFinished = false,
+            isFavorite = false
         )
     }
 

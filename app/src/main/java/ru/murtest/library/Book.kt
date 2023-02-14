@@ -8,5 +8,6 @@ data class Book(
     val title: String,
     val dateReadStart: Date,
     val dateReadEnd: Date,
-    val isFinished: Boolean
+    val isFinished: Boolean,
+    val isFavorite: Boolean,
 )
