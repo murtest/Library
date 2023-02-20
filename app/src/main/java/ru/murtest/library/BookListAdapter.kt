@@ -26,6 +26,12 @@ class BookListAdapter(private val books: List<Book>) :
                     Toast.LENGTH_SHORT
                 ).show()
             }
+
+            binding.bookFinished.visibility = if (book.isFinished) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
     }
 
