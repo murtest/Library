@@ -18,9 +18,8 @@ class BookListAdapter(private val books: List<Book>) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(book: Book) {
             binding.bookTitle.text = book.title
-            val dateFormat= DateFormat.getPatternInstance("EEEE, MMMM d, YYYY")
-            binding.bookDateRange.text = dateFormat.format(book.dateReadStart)
-                .plus(if (book.isFinished) " - ".plus(dateFormat.format(book.dateReadEnd)) else "")
+            binding.bookDateRange.text = book.dateReadStart.toString()
+                .plus(if (book.isFinished) " - ".plus(book.dateReadEnd.toString()) else "")
 
             binding.root.setOnClickListener {
                 Toast.makeText(
