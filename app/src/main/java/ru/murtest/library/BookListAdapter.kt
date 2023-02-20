@@ -1,6 +1,5 @@
 package ru.murtest.library
 
-import android.icu.text.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +7,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ru.murtest.library.databinding.FragmentBookListBinding
 import ru.murtest.library.databinding.ListItemBookBinding
-import java.util.Date
 
 class BookListAdapter(private val books: List<Book>) :
     RecyclerView.Adapter<BookListAdapter.BookHolder>() {
@@ -27,12 +25,6 @@ class BookListAdapter(private val books: List<Book>) :
                     "${book.title} clicked!",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-
-            binding.bookFinished.visibility = if (book.isFinished) {
-                View.VISIBLE
-            } else {
-                View.GONE
             }
         }
     }

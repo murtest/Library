@@ -1,50 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="4dp"
-    android:paddingVertical="5dp">
+    android:paddingVertical="5dp"
+    android:paddingHorizontal="4dp">
 
     <TextView
         android:id="@+id/book_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:padding="5dp"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        tools:text="Book Title"
+        android:background="@color/teal_200"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/book_finished"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Book Title" />
+        android:padding="5dp"/>
 
     <TextView
         android:id="@+id/book_date_range"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:padding="5dp"
-        app:layout_constraintEnd_toStartOf="@+id/book_finished"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/book_title"
-        tools:text="Book Date Range" />
-
-    <ImageView
-        android:id="@+id/book_finished"
-        android:layout_width="25dp"
-        android:layout_height="23dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_finished" />
+        tools:text="Book Date Range"
+        android:background="@color/teal_700"
+        android:textColor="@color/white"
+        android:padding="5dp"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
