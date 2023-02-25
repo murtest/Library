@@ -16,6 +16,7 @@ class BookListAdapter(private val books: List<Book>) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(book: Book) {
             binding.bookTitle.text = book.title
+            binding.bookAuthor.text = book.author
             binding.bookDateRange.text = book.dateReadStart.toString()
                 .plus(if (book.isFinished) " - ".plus(book.dateReadEnd.toString()) else "")
 

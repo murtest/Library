@@ -25,6 +25,7 @@ class BookDetailFragment : Fragment() {
         book = Book(
             id = UUID.randomUUID(),
             title = "",
+            author = "",
             dateReadStart = Date(),
             dateReadEnd = Date(),
             isFinished = false

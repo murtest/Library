@@ -15,12 +15,15 @@ class BookListViewModel : ViewModel() {
     val books = mutableListOf<Book>()
 
     init {
-        Log.d(TAG, "init starting")
         viewModelScope.launch {
-            Log.d(TAG, "coroutine launched")
             books += loadBooks()
-            Log.d(TAG, "Loading books finished")
         }
+    }
+
+
+
+    suspend fun addBook(book: Book) {
+        bookRepository.addBook(book)
     }
 
     suspend fun loadBooks(): List<Book> {

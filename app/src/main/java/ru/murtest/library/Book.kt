@@ -8,6 +8,7 @@ import java.util.UUID
 data class Book(
     @PrimaryKey val id: UUID,
     val title: String,
+    val author: String,
     val dateReadStart: Date,
     val dateReadEnd: Date,
     val isFinished: Boolean

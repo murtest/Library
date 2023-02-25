@@ -21,6 +21,10 @@ class BookRepository private constructor(context: Context) {
 
     suspend fun getBook(id: UUID): Book = database.bookDao().getBook(id)
 
+    suspend fun addBook(book: Book) {
+        database.bookDao().addBook(book)
+    }
+
     companion object {
         private var INSTANCE: BookRepository? = null
 
