@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -41,8 +42,13 @@ class BookListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val books = bookListViewModel.loadBooks()
-                binding.bookRecyclerView.adapter = BookListAdapter(books)
+                bookListViewModel.books.collect { books ->
+                    binding.bookRecyclerView.adapter = BookListAdapter(books) { bookId ->
+                        findNavController().navigate(
+                            BookListFragmentDirections.showBookDetail(bookId)
+                        )
+                    }
+                }
             }
         }
     }

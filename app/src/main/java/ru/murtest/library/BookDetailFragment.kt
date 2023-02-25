@@ -1,11 +1,19 @@
 package ru.murtest.library
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.murtest.library.databinding.FragmentBookDetailBinding
 import java.util.*
 
@@ -17,19 +25,10 @@ class BookDetailFragment : Fragment() {
             "Cannot access binding because it is null. Is the view visible?"
         }
 
-    private lateinit var book: Book
+    private val args: BookDetailFragmentArgs by navArgs()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        book = Book(
-            id = UUID.randomUUID(),
-            title = "",
-            author = "",
-            dateReadStart = Date(),
-            dateReadEnd = Date(),
-            isFinished = false
-        )
+    private val bookDetailViewModel: BookDetailViewModel by viewModels {
+        BookDetailViewModelFactory(args.bookId)
     }
 
     override fun onCreateView(
@@ -47,33 +46,54 @@ class BookDetailFragment : Fragment() {
 
         binding.apply {
             bookTitle.doOnTextChanged { text, _, _, _ ->
-                book = book.copy(title = text.toString())
+                bookDetailViewModel.updateBook { oldBook ->
+                    oldBook.copy(title = text.toString())
+                }
             }
 
             bookDateReadStart.apply {
-                text = book.dateReadStart.toString()
                 isEnabled = false
             }
 
             bookDateReadEnd.apply {
-                text = if (book.isFinished) book.dateReadEnd.toString() else ""
                 isEnabled = false
             }
 
             bookFinished.setOnCheckedChangeListener { _, isChecked ->
                 if (!isChecked) {
-                    book = book.copy(
-                        isFinished = isChecked
-                    )
+                    bookDetailViewModel.updateBook { oldBook ->
+                        oldBook.copy(
+                            isFinished = false
+                        )
+                    }
                     bookDateReadEnd.text = ""
                 } else {
-                    book = book.copy(
-                        dateReadEnd = Date(),
-                        isFinished = isChecked
-                    )
-                    bookDateReadEnd.text = book.dateReadEnd.toString()
+                    bookDetailViewModel.updateBook { oldBook ->
+                        oldBook.copy(
+                            dateReadEnd = Date(),
+                            isFinished = true)
+                    }
                 }
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                bookDetailViewModel.book.collect {book ->
+                    book?.let { updateUi(it) }
+                }
+            }
+        }
+    }
+
+    private fun updateUi(book: Book) {
+        binding.apply {
+            if (bookTitle.text.toString() != book.title) {
+                bookTitle.setText(book.title)
+            }
+            bookDateReadStart.text = book.dateReadStart.toString()
+            bookDateReadEnd.text = if (book.isFinished) book.dateReadEnd.toString() else ""
+            bookFinished.isChecked = book.isFinished
         }
     }
 

@@ -7,25 +7,24 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ru.murtest.library.databinding.FragmentBookListBinding
 import ru.murtest.library.databinding.ListItemBookBinding
+import java.util.*
 
-class BookListAdapter(private val books: List<Book>) :
+class BookListAdapter(
+    private val books: List<Book>,
+    private val onBookClicked: (bookId: UUID) -> Unit) :
     RecyclerView.Adapter<BookListAdapter.BookHolder>() {
 
     class BookHolder(
         private val binding: ListItemBookBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(book: Book) {
+        fun bind(book: Book, onBookClicked: (bookId: UUID) -> Unit) {
             binding.bookTitle.text = book.title
             binding.bookAuthor.text = book.author
             binding.bookDateRange.text = book.dateReadStart.toString()
                 .plus(if (book.isFinished) " - ".plus(book.dateReadEnd.toString()) else "")
 
             binding.root.setOnClickListener {
-                Toast.makeText(
-                    binding.root.context,
-                    "${book.title} clicked!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onBookClicked(book.id)
             }
 
             binding.bookFinished.visibility = if (book.isFinished) {
@@ -44,7 +43,7 @@ class BookListAdapter(private val books: List<Book>) :
 
     override fun onBindViewHolder(holder: BookHolder, position: Int) {
         val book = books[position]
-        holder.bind(book)
+        holder.bind(book, onBookClicked)
     }
 
     override fun getItemCount(): Int = books.size

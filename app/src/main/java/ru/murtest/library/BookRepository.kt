@@ -2,12 +2,20 @@ package ru.murtest.library
 
 import android.content.Context
 import androidx.room.Room
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import ru.murtest.library.database.BookDatabase
 import java.util.*
 
 private const val DATABASE_NAME = "book-database"
 
-class BookRepository private constructor(context: Context) {
+class BookRepository private constructor(
+    context: Context,
+    private val coroutineScope: CoroutineScope = GlobalScope
+) {
 
     private val database: BookDatabase = Room
         .databaseBuilder(
@@ -17,9 +25,15 @@ class BookRepository private constructor(context: Context) {
         )
         .build()
 
-    suspend fun getBooks(): List<Book> = database.bookDao().getBooks()
+    fun getBooks(): Flow<List<Book>> = database.bookDao().getBooks()
 
     suspend fun getBook(id: UUID): Book = database.bookDao().getBook(id)
+
+    fun updateBook(book: Book) {
+        coroutineScope.launch {
+            database.bookDao().updateBook(book)
+        }
+    }
 
     suspend fun addBook(book: Book) {
         database.bookDao().addBook(book)
