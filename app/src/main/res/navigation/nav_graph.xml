@@ -22,5 +22,19 @@
         <argument
             android:name="bookId"
             app:argType="java.util.UUID" />
+        <action
+            android:id="@+id/select_date"
+            app:destination="@id/datePickerFragment" />
     </fragment>
+    <dialog
+        android:id="@+id/datePickerFragment"
+        android:name="ru.murtest.library.DatePickerFragment"
+        android:label="DatePickerFragment" >
+        <argument
+            android:name="bookDate"
+            app:argType="java.util.Date" />
+        <argument
+            android:name="bundleKey"
+            app:argType="string" />
+    </dialog>
 </navigation>
