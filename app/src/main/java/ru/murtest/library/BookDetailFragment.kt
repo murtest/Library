@@ -1,10 +1,10 @@
 package ru.murtest.library
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -20,6 +20,7 @@ import ru.murtest.library.databinding.FragmentBookDetailBinding
 import java.util.*
 private const val BUNDLE_KEY_DATE_START = "BUNDLE_KEY_DATE_START"
 private const val BUNDLE_KEY_DATE_END = "BUNDLE_KEY_DATE_END"
+private const val DATE_FORMAT = "d MMMM yyyy"
 class BookDetailFragment : Fragment() {
 
     private var _binding: FragmentBookDetailBinding? = null
@@ -27,11 +28,17 @@ class BookDetailFragment : Fragment() {
         get() = checkNotNull(_binding) {
             "Cannot access binding because it is null. Is the view visible?"
         }
+    private var currentBook: Book? = null
 
     private val args: BookDetailFragmentArgs by navArgs()
 
     private val bookDetailViewModel: BookDetailViewModel by viewModels {
         BookDetailViewModelFactory(args.bookId)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -52,7 +59,10 @@ class BookDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 bookDetailViewModel.book.collect {book ->
-                    book?.let { updateUi(it) }
+                    book?.let {
+                        updateUi(it)
+                        currentBook = it
+                    }
                 }
             }
         }
@@ -119,5 +129,46 @@ class BookDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_book_detail, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.book_share -> {
+                shareBook()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun shareBook() {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, getBookShareText(currentBook))
+        }
+
+        val chooserIntent = Intent.createChooser(
+            shareIntent,
+            getString(R.string.book_share)
+        )
+        startActivity(chooserIntent)
+    }
+
+    private fun getBookShareText(book: Book?): String {
+        val dateReadStart = DateFormat.format(DATE_FORMAT, book?.dateReadStart).toString()
+        val dateReadEnd = DateFormat.format(DATE_FORMAT, book?.dateReadEnd).toString()
+
+        return getString(
+            R.string.book_share_text,
+            book?.title,
+            book?.author,
+            dateReadStart,
+            dateReadEnd
+        )
     }
 }

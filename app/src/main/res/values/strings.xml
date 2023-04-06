@@ -5,4 +5,9 @@
     <string name="book_details_label">Details</string>
     <string name="book_finished_label">Finished</string>
     <string name="new_book">New Book</string>
+    <string name="book_share">Send book details via</string>
+
+    <string name="book_share_text">
+        Title: %1$s\nAuthor: %2$s\nReading start and end dates: %3$s - %4$s
+    </string>
 </resources>
