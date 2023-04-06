@@ -1,9 +1,7 @@
 package ru.murtest.library
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.murtest.library.databinding.FragmentBookDetailBinding
 import ru.murtest.library.databinding.FragmentBookListBinding
+import java.util.*
 
 class BookListFragment : Fragment() {
 
@@ -25,6 +24,11 @@ class BookListFragment : Fragment() {
         }
 
     private val bookListViewModel: BookListViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,5 +60,37 @@ class BookListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_book_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.new_book -> {
+                showNewBook()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showNewBook() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val newBook = Book(
+                id = UUID.randomUUID(),
+                title = "",
+                author = "",
+                dateReadStart = Date(),
+                dateReadEnd = Date(),
+                isFinished = false
+            )
+            bookListViewModel.addBook(newBook)
+            findNavController().navigate(
+                BookListFragmentDirections.showBookDetail(newBook.id)
+            )
+        }
     }
 }

@@ -47,30 +47,7 @@ class BookDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            bookTitle.doOnTextChanged { text, _, _, _ ->
-                bookDetailViewModel.updateBook { oldBook ->
-                    oldBook.copy(title = text.toString())
-                }
-            }
 
-            bookFinished.setOnCheckedChangeListener { _, isChecked ->
-                if (!isChecked) {
-                    bookDetailViewModel.updateBook { oldBook ->
-                        oldBook.copy(
-                            isFinished = false
-                        )
-                    }
-                    bookDateReadEnd.text = ""
-                } else {
-                    bookDetailViewModel.updateBook { oldBook ->
-                        oldBook.copy(
-                            dateReadEnd = Date(),
-                            isFinished = true)
-                    }
-                }
-            }
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -100,6 +77,11 @@ class BookDetailFragment : Fragment() {
             if (bookTitle.text.toString() != book.title) {
                 bookTitle.setText(book.title)
             }
+            bookTitle.doOnTextChanged { text, _, _, _ ->
+                bookDetailViewModel.updateBook { oldBook ->
+                    oldBook.copy(title = text.toString())
+                }
+            }
 
             bookDateReadStart.text = book.dateReadStart.toString()
             bookDateReadStart.setOnClickListener {
@@ -116,6 +98,21 @@ class BookDetailFragment : Fragment() {
             }
 
             bookFinished.isChecked = book.isFinished
+            bookFinished.setOnCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    bookDetailViewModel.updateBook { oldBook ->
+                        oldBook.copy(
+                            isFinished = false
+                        )
+                    }
+                } else {
+                    bookDetailViewModel.updateBook { oldBook ->
+                        oldBook.copy(
+                            dateReadEnd = Date(),
+                            isFinished = true)
+                    }
+                }
+            }
         }
     }
 
