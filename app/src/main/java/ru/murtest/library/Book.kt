@@ -11,5 +11,7 @@ data class Book(
     val author: String,
     val dateReadStart: Date,
     val dateReadEnd: Date,
-    val isFinished: Boolean
+    val isFinished: Boolean,
+    val review: String,
+    val photoFileName: String? = null
 )

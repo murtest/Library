@@ -8,6 +8,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import ru.murtest.library.database.BookDatabase
+import ru.murtest.library.database.migration_1_2
+import ru.murtest.library.database.migration_2_3
 import java.util.*
 
 private const val DATABASE_NAME = "book-database"
@@ -23,6 +25,7 @@ class BookRepository private constructor(
             BookDatabase::class.java,
             DATABASE_NAME
         )
+        .addMigrations(migration_1_2, migration_2_3)
         .build()
 
     fun getBooks(): Flow<List<Book>> = database.bookDao().getBooks()

@@ -85,7 +85,8 @@ class BookListFragment : Fragment() {
                 author = "",
                 dateReadStart = Date(),
                 dateReadEnd = Date(),
-                isFinished = false
+                isFinished = false,
+                review = ""
             )
             bookListViewModel.addBook(newBook)
             findNavController().navigate(

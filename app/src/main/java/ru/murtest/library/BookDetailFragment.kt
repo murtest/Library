@@ -1,10 +1,15 @@
 package ru.murtest.library
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import androidx.core.view.doOnLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -17,6 +22,7 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.murtest.library.databinding.FragmentBookDetailBinding
+import java.io.File
 import java.util.*
 private const val BUNDLE_KEY_DATE_START = "BUNDLE_KEY_DATE_START"
 private const val BUNDLE_KEY_DATE_END = "BUNDLE_KEY_DATE_END"
@@ -35,6 +41,18 @@ class BookDetailFragment : Fragment() {
     private val bookDetailViewModel: BookDetailViewModel by viewModels {
         BookDetailViewModelFactory(args.bookId)
     }
+
+    private val takePhoto = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { didTakePhoto: Boolean ->
+        if (didTakePhoto && photoName != null) {
+            bookDetailViewModel.updateBook { oldBook ->
+                oldBook.copy(photoFileName = photoName)
+            }
+        }
+    }
+
+    private var photoName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +111,15 @@ class BookDetailFragment : Fragment() {
                 }
             }
 
+            if (bookAuthor.text.toString() != book.author) {
+                bookAuthor.setText(book.author)
+            }
+            bookAuthor.doOnTextChanged { text, _, _, _ ->
+                bookDetailViewModel.updateBook { oldBook ->
+                    oldBook.copy(author = text.toString())
+                }
+            }
+
             bookDateReadStart.text = book.dateReadStart.toString()
             bookDateReadStart.setOnClickListener {
                 findNavController().navigate(
@@ -123,6 +150,35 @@ class BookDetailFragment : Fragment() {
                     }
                 }
             }
+
+            if (bookReview.text.toString() != book.review) {
+                bookReview.setText(book.review)
+            }
+            bookReview.doOnTextChanged { text, _, _, _ ->
+                bookDetailViewModel.updateBook { oldBook ->
+                    oldBook.copy(review = text.toString())
+                }
+            }
+
+            bookCamera.setOnClickListener {
+                photoName = "IMG_${Date()}.JPG"
+                val photoFile = File(requireContext().applicationContext.filesDir, photoName)
+                val photoUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "ru.murtest.library.fileprovider",
+                    photoFile
+                )
+
+                takePhoto.launch(photoUri)
+            }
+
+            val captureImageIntent = takePhoto.contract.createIntent(
+                requireContext(),
+                null
+            )
+            bookCamera.isEnabled = canResolveIntent(captureImageIntent)
+
+            updatePhoto(book.photoFileName)
         }
     }
 
@@ -170,5 +226,38 @@ class BookDetailFragment : Fragment() {
             dateReadStart,
             dateReadEnd
         )
+    }
+
+    private fun canResolveIntent(intent: Intent): Boolean {
+        val packageManager: PackageManager = requireActivity().packageManager
+        val resolvedActivity: ResolveInfo? =
+            packageManager.resolveActivity(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+        return resolvedActivity != null
+    }
+
+    private fun updatePhoto(photoFileName: String?) {
+        if (binding.bookPhoto.tag != photoFileName) {
+            val photoFile = photoFileName?.let {
+                File(requireContext().applicationContext.filesDir, it)
+            }
+
+            if (photoFile?.exists() == true) {
+                binding.bookPhoto.doOnLayout { measuredView ->
+                    val scaledBitmap = getScaledBitmap(
+                        photoFile.path,
+                        measuredView.width,
+                        measuredView.height
+                    )
+                    binding.bookPhoto.setImageBitmap(scaledBitmap)
+                    binding.bookPhoto.tag = photoFileName
+                }
+            } else {
+                binding.bookPhoto.setImageBitmap(null)
+                binding.bookPhoto.tag = null
+            }
+        }
     }
 }
